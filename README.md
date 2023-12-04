@@ -6,4 +6,4 @@ Participation to the https://adventofcode.com/2023 in collaboration with :
 Here are the puzzle pitches :
 - [Day 1 - Trebuchet](./docs/day01.md) ⭐⭐ 
 - [Day 2 - Cube Conundrum](./docs/day02.md) ⭐⭐
-- [Day 3 - Gear Ratios](./docs/day03.md) ⭐
+- [Day 3 - Gear Ratios](./docs/day03.md) ⭐⭐

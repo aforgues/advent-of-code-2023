@@ -19,6 +19,8 @@ public class GearRatiosApp {
 
         // First part
         app.computeScore();
+
+        app.computeScorePart2();
     }
 
     private final String filePath;
@@ -87,5 +89,15 @@ public class GearRatiosApp {
         Instant end = Instant.now();
 
         System.out.println("Score : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
+    }
+
+    private void computeScorePart2() {
+        Instant start = Instant.now();
+
+        long score = this.engineSchematic.sumGearRatios();
+
+        Instant end = Instant.now();
+
+        System.out.println("Score Part 2 : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
     }
 }

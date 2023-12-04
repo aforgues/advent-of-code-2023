@@ -1,9 +1,8 @@
 package day03;
 
-import utils.Direction;
-import utils.Move;
 import utils.Position;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public record EngineSchematic(List<Symbol> symbols, List<PartNumber> partNumbers, int lineSize, int lineNumber) {
@@ -54,35 +53,31 @@ public record EngineSchematic(List<Symbol> symbols, List<PartNumber> partNumbers
     public long sumPartNumbers() {
         // get partNumber which are adjacent to symbols and sum them
         return this.partNumbers.stream()
-                .filter(this::isAdjacentToSymbol)
+                .filter(this::isPartNumberAdjacentToAnySymbol)
                 .map(PartNumber::value)
                 .reduce(0, Integer::sum);
     }
 
-    private boolean isAdjacentToSymbol(PartNumber partNumber) {
+    private boolean isPartNumberAdjacentToAnySymbol(PartNumber partNumber) {
         return this.symbols.stream()
-                .anyMatch(symbol -> {
-                    Position symbolPosition = symbol.position();
-                    Position partNumberStartPosition = partNumber.startPosition();
-                    if (partNumberStartPosition.adjacentPosition(Direction.NORTH_WEST).equals(symbolPosition)
-                            || partNumberStartPosition.adjacentPosition(Direction.WEST).equals(symbolPosition)
-                            || partNumberStartPosition.adjacentPosition(Direction.SOUTH_WEST).equals(symbolPosition)
-                            || partNumberStartPosition.adjacentPosition(Direction.NORTH).equals(symbolPosition)
-                            || partNumberStartPosition.adjacentPosition(Direction.SOUTH).equals(symbolPosition))
-                        return true;
+                .anyMatch(partNumber::isAdjacentToSymbol);
+    }
 
-                    for (int i = 1; i < partNumber.size() - 1; i++) {
-                        Position partNumberMiddlePosition = partNumberStartPosition.moveTo(Move.RIGHT);
-                        if (partNumberMiddlePosition.adjacentPosition(Direction.NORTH).equals(symbolPosition)
-                                || partNumberMiddlePosition.adjacentPosition(Direction.SOUTH).equals(symbolPosition))
-                            return true;
+    public long sumGearRatios() {
+        return this.getGearRatios().stream().reduce(0, Integer::sum);
+    }
+
+    private List<Integer> getGearRatios() {
+        List<Integer> gearRatios = new ArrayList<>();
+        this.symbols.stream().filter(symbol -> symbol.value() == '*')
+                .forEach(symbol -> {
+                    List<PartNumber> adjacentPartNumbers = new ArrayList<>();
+                    this.partNumbers.stream().filter(partNumber -> partNumber.isAdjacentToSymbol(symbol))
+                            .forEach(adjacentPartNumbers::add);
+                    if (adjacentPartNumbers.size() == 2) {
+                        gearRatios.add(adjacentPartNumbers.get(0).value() * adjacentPartNumbers.get(1).value());
                     }
-                    Position partNumberEndPosition = new Position(partNumberStartPosition.x() + partNumber.size() - 1, partNumberStartPosition.y());
-                    return partNumberEndPosition.adjacentPosition(Direction.NORTH).equals(symbolPosition)
-                            || partNumberEndPosition.adjacentPosition(Direction.SOUTH).equals(symbolPosition)
-                            || partNumberEndPosition.adjacentPosition(Direction.NORTH_EAST).equals(symbolPosition)
-                            || partNumberEndPosition.adjacentPosition(Direction.SOUTH_EAST).equals(symbolPosition)
-                            || partNumberEndPosition.adjacentPosition(Direction.EAST).equals(symbolPosition);
                 });
+        return gearRatios;
     }
 }
