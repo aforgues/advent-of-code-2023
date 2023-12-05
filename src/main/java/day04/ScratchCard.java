@@ -18,12 +18,17 @@ public record ScratchCard(int id, List<Integer> winningNumbers, List<Integer> ca
     }
 
     public long computePoints() {
+        int matchCount = matchCount();
+        return matchCount > 0 ? Double.valueOf(Math.pow(2, matchCount - 1)).longValue() : 0L;
+    }
+
+    public int matchCount() {
         AtomicInteger matchCount = new AtomicInteger();
         this.cardNumbers.forEach(cardNumber -> {
             if (this.winningNumbers.stream().anyMatch(winningNumber -> winningNumber.equals(cardNumber))) {
                 matchCount.getAndIncrement();
             }
         });
-        return matchCount.get() > 0 ? Double.valueOf(Math.pow(2, matchCount.get() - 1)).longValue() : 0L;
+        return matchCount.get();
     }
 }
