@@ -39,13 +39,13 @@ public class SeedFertilizerApp {
         scanner.useDelimiter("\n");
 
         List<Long> toBePlantedSeeds = new ArrayList<>();
-        Map<Long, Long> seedToSoilMap = new HashMap<>();
-        Map<Long, Long> soilToFertilizerMap = new HashMap<>();
-        Map<Long, Long> fertilizerToWaterMap = new HashMap<>();
-        Map<Long, Long> waterToLightMap = new HashMap<>();
-        Map<Long, Long> lightToTemperatureMap = new HashMap<>();
-        Map<Long, Long> temperatureToHumidityMap = new HashMap<>();
-        Map<Long, Long> humidityToLocationMap = new HashMap<>();
+        List<MapConversionRule> seedToSoilMap = new ArrayList<>();
+        List<MapConversionRule> soilToFertilizerMap = new ArrayList<>();
+        List<MapConversionRule> fertilizerToWaterMap = new ArrayList<>();
+        List<MapConversionRule> waterToLightMap = new ArrayList<>();
+        List<MapConversionRule> lightToTemperatureMap = new ArrayList<>();
+        List<MapConversionRule> temperatureToHumidityMap = new ArrayList<>();
+        List<MapConversionRule> humidityToLocationMap = new ArrayList<>();
 
         while (scanner.hasNext()) {
             String content = scanner.next();
@@ -98,12 +98,12 @@ public class SeedFertilizerApp {
         System.out.println(this.almanac);
     }
 
-    private static void computeMappings(String mapLabel, Map<Long, Long> map, Scanner scanner) {
+    private static void computeMappings(String mapLabel, List<MapConversionRule> rules, Scanner scanner) {
         String mapLine = scanner.next();
         while(mapLine.length() > 0) {
             MapConversionRule rule = MapConversionRule.fromRawContent(mapLine);
             //System.out.println("rule : " + rule);
-            map.putAll(rule.generateMapping());
+            rules.add(rule);
             if (scanner.hasNext()) {
                 mapLine = scanner.next();
             }

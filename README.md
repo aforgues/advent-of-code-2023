@@ -8,4 +8,4 @@ Here are the puzzle pitches :
 - [Day 2 - Cube Conundrum](./docs/day02.md) ⭐⭐
 - [Day 3 - Gear Ratios](./docs/day03.md) ⭐⭐
 - [Day 4 - Scratchcards](./docs/day04.md) ⭐⭐
-- [Day 5 - If You Give A Seed A Fertilizer](./docs/day05.md) 
+- [Day 5 - If You Give A Seed A Fertilizer](./docs/day05.md) ⭐ 
