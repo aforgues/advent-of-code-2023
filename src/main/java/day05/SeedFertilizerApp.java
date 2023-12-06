@@ -23,11 +23,14 @@ public class SeedFertilizerApp {
 
         // First part
         app.computeScore();
+
+        // Second part
+        app.computeScorePart2();
     }
 
     private final String filePath;
-    private Almanac almanac;
 
+    private Almanac almanac;
     public SeedFertilizerApp() throws FileNotFoundException {
         String BASE_PATH = "src/main/resources/" + this.getClass().getPackageName() + "/";
         this.filePath = BASE_PATH + PUZZLE_INPUT_FILE_NAME;
@@ -49,7 +52,7 @@ public class SeedFertilizerApp {
 
         while (scanner.hasNext()) {
             String content = scanner.next();
-            System.out.println(content);
+            //System.out.println(content);
 
             if (content.startsWith(SEEDS)) {
                 System.out.println(content);
@@ -117,10 +120,20 @@ public class SeedFertilizerApp {
     private void computeScore() {
         Instant start = Instant.now();
 
-        long score = this.almanac.computeLocationNumbersRequired().stream().min(Long::compare).get();
+        long score = this.almanac.computeLowestLocationNumberRequired(false);
 
         Instant end = Instant.now();
 
-        System.out.println("Score : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
+        System.out.println("Score Part 1 : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
+    }
+
+    private void computeScorePart2() {
+        Instant start = Instant.now();
+
+        long score = this.almanac.computeLowestLocationNumberRequired(true);
+
+        Instant end = Instant.now();
+
+        System.out.println("Score Part 2 : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
     }
 }
