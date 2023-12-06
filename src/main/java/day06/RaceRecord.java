@@ -1,10 +1,10 @@
 package day06;
 
-public record RaceRecord(int timeAllowed, int bestDistance) {
-    public int countWaysToBeatTheRecord() {
-        int count = 0;
-        for (int i = 0; i < timeAllowed; i++) {
-            int distance = i * (timeAllowed - i);
+public record RaceRecord(long timeAllowed, long bestDistance) {
+    public long countWaysToBeatTheRecord() {
+        long count = 0;
+        for (long i = 0; i < timeAllowed; i++) {
+            long distance = i * (timeAllowed - i);
             if (distance > bestDistance)
                 count++;
         }

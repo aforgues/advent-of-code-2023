@@ -15,6 +15,14 @@ public record SheetOfPaper(List<RaceRecord> raceRecords) {
     public long timesOfWaysToBeatTheRecord() {
         return this.raceRecords.stream()
                 .map(RaceRecord::countWaysToBeatTheRecord)
-                .reduce(1, (a, b) -> a*b);
+                .reduce(1L, (a, b) -> a*b);
+    }
+
+    public long waysToBeatTheRecordAsOneRace() {
+        RaceRecord record = this.raceRecords.stream()
+                .reduce(new RaceRecord(0, 0),
+                        (a, b) -> new RaceRecord(Long.parseLong(a.timeAllowed() + String.valueOf(b.timeAllowed())),
+                                Long.parseLong(a.bestDistance() + String.valueOf(b.bestDistance()))));
+        return record.countWaysToBeatTheRecord();
     }
 }
