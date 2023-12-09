@@ -6,4 +6,8 @@ public record NetworkNode(String name) {
     public boolean isFinish() {
         return this.name.equals(FINISH_NAME);
     }
+
+    public boolean isGhostFinish() {
+        return this.name.endsWith("Z");
+    }
 }
