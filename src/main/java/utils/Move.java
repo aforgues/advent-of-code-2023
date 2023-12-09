@@ -22,6 +22,16 @@ public enum Move {
         return Arrays.stream(Move.values()).filter(move -> move.sign.equals(sign)).findFirst().orElse(null);
     }
 
+    public static Move fromUDLR(char c) {
+        return switch (c) {
+            case 'U' -> UP;
+            case 'D' -> DOWN;
+            case 'L' -> LEFT;
+            case 'R' -> RIGHT;
+            default -> RIGHT;
+        };
+    }
+
     public static Move from(Position from, Position to) {
         if (to.x() == from.x()) {
             if (to.y() > from.y())
