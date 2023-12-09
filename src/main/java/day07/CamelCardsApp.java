@@ -16,18 +16,20 @@ public class CamelCardsApp {
 
         // First part
         app.computeScore();
+
+        // Second part
+        app.computeScorePart2();
     }
 
     private final String filePath;
     private CamelCards camelCards;
 
-    public CamelCardsApp() throws FileNotFoundException {
+    public CamelCardsApp() {
         String BASE_PATH = "src/main/resources/" + this.getClass().getPackageName() + "/";
         this.filePath = BASE_PATH + PUZZLE_INPUT_FILE_NAME;
-        this.parseFile();
     }
 
-    private void parseFile() throws FileNotFoundException {
+    private void parseFile(boolean useNewJokerRule) throws FileNotFoundException {
         Scanner scanner = new Scanner(new File(this.filePath));
         scanner.useDelimiter("\n");
 
@@ -37,20 +39,32 @@ public class CamelCardsApp {
             System.out.println(content);
 
             String[] arr = content.split(" ");
-            bidsByHand.put(Hand.fromRawContent(arr[0]), Integer.parseInt(arr[1]));
+            bidsByHand.put(Hand.fromRawContent(arr[0], useNewJokerRule), Integer.parseInt(arr[1]));
         }
 
         this.camelCards = new CamelCards(bidsByHand);
         System.out.println(this.camelCards);
     }
 
-    private void computeScore() {
+    private void computeScore() throws FileNotFoundException {
         Instant start = Instant.now();
 
+        this.parseFile(false);
         long score = this.camelCards.totalWinnings();
 
         Instant end = Instant.now();
 
         System.out.println("Score : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
+    }
+
+    private void computeScorePart2() throws FileNotFoundException {
+        Instant start = Instant.now();
+
+        this.parseFile(true);
+        long score = this.camelCards.totalWinnings();
+
+        Instant end = Instant.now();
+
+        System.out.println("Score Part 2 : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
     }
 }

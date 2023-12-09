@@ -10,4 +10,4 @@ Here are the puzzle pitches :
 - [Day 4 - Scratchcards](./docs/day04.md) ⭐⭐
 - [Day 5 - If You Give A Seed A Fertilizer](./docs/day05.md) ⭐⭐ 
 - [Day 6 - Wait For It](./docs/day06.md) ⭐⭐
-- [Day 7 - Camel Cards](./docs/day07.md) ⭐
+- [Day 7 - Camel Cards](./docs/day07.md) ⭐⭐

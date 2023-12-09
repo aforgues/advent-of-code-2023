@@ -10,6 +10,8 @@ public record CamelCards(TreeMap<Hand, Integer> bidsByHand) {
     }
 
     private int rank(Hand hand) {
-        return (this.bidsByHand.keySet().stream().toList().indexOf(hand) +  1);
+        int rank = (this.bidsByHand.keySet().stream().toList().indexOf(hand) +  1);
+        System.out.println("Hand " + hand.cardTypeList() + " => type = " + hand.getType() + " => rank = " + rank);
+        return rank;
     }
 }
