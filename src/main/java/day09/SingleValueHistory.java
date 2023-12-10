@@ -7,6 +7,26 @@ public record SingleValueHistory(List<Integer> values) {
 
     public Integer extrapolateNextValue() {
         System.out.println("Extrapolating next value for : " + this.values);
+        List<List<Integer>> sequences = generateFullSequences();
+
+        return sequences.reversed()
+                    .stream()
+                    .map(seq -> seq.get(seq.size() - 1))
+                    .reduce(0, Integer::sum);
+
+    }
+
+    public Integer extrapolatePreviousValue() {
+        System.out.println("Extrapolating previous value for : " + this.values);
+        List<List<Integer>> sequences = generateFullSequences();
+
+        return sequences.reversed()
+                .stream()
+                .map(seq -> seq.get(0))
+                .reduce(0, (a, b) -> b - a);
+    }
+
+    private List<List<Integer>> generateFullSequences() {
         List<List<Integer>> sequences = new ArrayList<>();
         sequences.add(this.values);
 
@@ -19,14 +39,10 @@ public record SingleValueHistory(List<Integer> values) {
         }
 
         System.out.println(sequences);
-        return sequences.reversed()
-                    .stream()
-                    .map(seq -> seq.get(seq.size() - 1))
-                    .reduce(0, Integer::sum);
-
+        return sequences;
     }
 
-    private List<Integer> generateNextSequence(List<Integer> seqValues) {
+    private static List<Integer> generateNextSequence(List<Integer> seqValues) {
         Integer current = null;
         List<Integer> sequence = new ArrayList<>();
         for (Integer value : seqValues) {
@@ -37,4 +53,5 @@ public record SingleValueHistory(List<Integer> values) {
         }
         return sequence;
     }
+
 }

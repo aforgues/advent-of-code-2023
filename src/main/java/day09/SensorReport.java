@@ -8,4 +8,10 @@ public record SensorReport(List<SingleValueHistory> singleValueHistoryList) {
                 .map(SingleValueHistory::extrapolateNextValue)
                 .reduce(0, Integer::sum);
     }
+
+    public long sumExtrapolatedPreviousValues() {
+        return this.singleValueHistoryList.stream()
+                .map(SingleValueHistory::extrapolatePreviousValue)
+                .reduce(0, Integer::sum);
+    }
 }

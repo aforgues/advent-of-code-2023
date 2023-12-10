@@ -18,6 +18,9 @@ public class MirageMaintenanceApp {
 
         // First part
         app.computeScore();
+
+        // Second part
+        app.computeScorePart2();
     }
 
     private final String filePath;
@@ -53,5 +56,15 @@ public class MirageMaintenanceApp {
         Instant end = Instant.now();
 
         System.out.println("Score : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
+    }
+
+    private void computeScorePart2() {
+        Instant start = Instant.now();
+
+        long score = this.sensorReport.sumExtrapolatedPreviousValues();
+
+        Instant end = Instant.now();
+
+        System.out.println("Score Part 2 : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
     }
 }
