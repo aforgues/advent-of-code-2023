@@ -14,7 +14,7 @@ public class HauntedWastelandApp {
         HauntedWastelandApp app = new HauntedWastelandApp();
 
         // First part
-        //app.computeScore();
+        app.computeScore();
 
         // Second part
         app.computeScorePart2();
@@ -65,7 +65,7 @@ public class HauntedWastelandApp {
     private void computeScorePart2() {
         Instant start = Instant.now();
 
-        long score = this.desertMap.ghostStepsToFinishNode();
+        long score = this.desertMap.ghostStepsToFinishNodeV2();
 
         Instant end = Instant.now();
 

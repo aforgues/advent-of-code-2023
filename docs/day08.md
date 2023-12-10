@@ -74,3 +74,5 @@ Here, there are two starting nodes, 11A and 22A (because they both end with A). 
 So, in this example, you end up entirely on nodes that end in Z after 6 steps.
 
 Simultaneously start on every node that ends with A. **How many steps does it take before you're only on nodes that end with Z?**
+
+Your puzzle answer was **12833235391111**.
