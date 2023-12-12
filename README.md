@@ -13,3 +13,4 @@ Here are the puzzle pitches :
 - [Day 7 - Camel Cards](./docs/day07.md) ⭐⭐
 - [Day 8 - Haunted Wasteland](./docs/day08.md) ⭐⭐
 - [Day 9 - Mirage Maintenance](./docs/day09.md) ⭐⭐
+- [Day 10 - Pipe Maze](./docs/day10.md) ⭐
