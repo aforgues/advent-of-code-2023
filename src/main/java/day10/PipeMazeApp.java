@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class PipeMazeApp {
 
-    private static final boolean TEST = false;
+    private static final boolean TEST = true;
     private static final String PUZZLE_INPUT_FILE_NAME = TEST ? "puzzle_input_test.txt" : "puzzle_input.txt";
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -15,6 +15,9 @@ public class PipeMazeApp {
 
         // First part
         app.computeScore();
+
+        // Second part
+        app.computeScorePart2();
     }
 
     private final String filePath;
@@ -50,6 +53,18 @@ public class PipeMazeApp {
 
         Instant end = Instant.now();
 
+        this.tilesGrid.displayInConsole();
+
         System.out.println("Score : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
+    }
+
+    private void computeScorePart2() {
+        Instant start = Instant.now();
+
+        long score = this.tilesGrid.countEnclosedTilesByTheLoop();
+
+        Instant end = Instant.now();
+
+        System.out.println("Score Part 2 : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
     }
 }

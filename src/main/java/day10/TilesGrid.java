@@ -3,10 +3,7 @@ package day10;
 import utils.Move;
 import utils.Position;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TilesGrid {
     private final Map<Position, Tile> tiles;
@@ -30,10 +27,26 @@ public class TilesGrid {
     }
 
     public void displayInConsole() {
+        displayInConsole(Collections.emptyList());
+    }
+
+    public void displayInConsole(List<Tile> eligibleEnclosedTiles) {
         StringBuilder sb = new StringBuilder();
         for (int line = 0; line < this.totalLines; line++) {
             for (int column = 0; column < this.totalColumns; column++) {
-                sb.append(getTileByPosition(new Position(column, line)).tileType().symbol);
+                Tile tile = getTileByPosition(new Position(column, line));
+                if (tile.tileType() == TileType.STARTING_POINT) {
+                    sb.append("S");
+                }
+                else if (this.loopTiles.contains(tile)) {
+                    sb.append(tile.tileType().boxDrawingSymbol);
+                }
+                else if (eligibleEnclosedTiles.contains(tile)) {
+                    sb.append("E");
+                }
+                else {
+                    sb.append(tile.tileType().symbol);
+                }
             }
             sb.append("\n");
         }
@@ -123,6 +136,73 @@ public class TilesGrid {
                     : getTileByPosition(currentTile.position().moveTo(Move.DOWN));
             default -> null;
         };
+    }
+
+    public long countEnclosedTilesByTheLoop() {
+        // Compute min/max x & y of the loop
+        int minLoopX = this.loopTiles.stream().map(tile -> tile.position().x()).min(Integer::compare).orElse(0);
+        int maxLoopX = this.loopTiles.stream().map(tile -> tile.position().x()).max(Integer::compare).orElse(this.totalColumns - 1);
+        int minLoopY = this.loopTiles.stream().map(tile -> tile.position().y()).min(Integer::compare).orElse(0);
+        int maxLoopY = this.loopTiles.stream().map(tile -> tile.position().y()).max(Integer::compare).orElse(this.totalLines - 1);
+
+        // Exclude all ground tile above these limits
+        List<Tile> eligibileTiles = this.tiles.values().stream()
+                .filter(tile -> tile.tileType() == TileType.GROUND)
+                .filter(tile -> tile.position().x() > minLoopX
+                        && tile.position().x() < maxLoopX
+                        && tile.position().y() > minLoopY
+                        && tile.position().y() < maxLoopY)
+                .toList();
+
+        System.out.println(eligibileTiles);
+        this.displayInConsole(eligibileTiles);
+
+        return eligibileTiles.stream().filter(tile -> ! this.isTileOutOfTheLoop(tile, minLoopX, maxLoopX, minLoopY, maxLoopY)).count();
+    }
+
+    private boolean isTileOutOfTheLoop(Tile eligibleTile, int minLoopX, int maxLoopX, int minLoopY, int maxLoopY) {
+        //System.out.println("Exploring Way out from the loop for eligible tile : " + eligibleTile);
+
+        // find a ground tile outside of the min/max of the loop tiles
+        Tile targetGroundTile = this.tiles.values().stream()
+                .filter(tile -> tile.tileType() == TileType.GROUND)
+                .filter(tile -> tile.position().x() < minLoopX || tile.position().x() > maxLoopX
+                        && tile.position().y() > minLoopY || tile.position().y() < maxLoopY)
+                .findFirst()
+                .orElse(null);
+
+        if (targetGroundTile == null)
+            return false;
+
+        //System.out.println("Target ground tile : " + targetGroundTile);
+
+        // try to go to this tile without crossing a loop tile
+        Map<Position, Tile> pathAlreadySeen = new HashMap<>();
+        Queue<Tile> nextTilesToExplore = new ArrayDeque<>();
+        nextTilesToExplore.add(eligibleTile);
+        Tile current;
+        while((current = nextTilesToExplore.poll()) != null) {
+            if (pathAlreadySeen.containsKey(current.position()))
+                continue;
+            pathAlreadySeen.put(current.position(), current);
+
+            /*if (current.equals(targetGroundTile)) {
+                return true;
+            }*/
+            if (current.position().x() <= minLoopX || current.position().x() >= maxLoopX
+            ||  current.position().y() <= minLoopY || current.position().y() >= maxLoopY)
+                return true;
+
+            for (Move move : Move.values()) {
+                Tile adjacentTile = this.getTileByPosition(current.position().moveTo(move));
+                if (adjacentTile != null && adjacentTile.tileType() == TileType.GROUND) {
+                    nextTilesToExplore.add(adjacentTile);
+                }
+            }
+        }
+
+
+        return false;
     }
 
     @Override
