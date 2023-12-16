@@ -14,3 +14,4 @@ Here are the puzzle pitches :
 - [Day 8 - Haunted Wasteland](./docs/day08.md) ⭐⭐
 - [Day 9 - Mirage Maintenance](./docs/day09.md) ⭐⭐
 - [Day 10 - Pipe Maze](./docs/day10.md) ⭐
+- [Day 11 - Cosmic Expansion](./docs/day11.md) ⭐

@@ -1,6 +1,6 @@
 package utils;
 
-public record Position(int x, int y) {
+public record Position(int x, int y) implements Comparable<Position> {
 
     // to build a position from a string as "x,y"
     public static Position getInstance(String content) {
@@ -37,5 +37,11 @@ public record Position(int x, int y) {
             case DOWN -> new Position(x, y + 1);
             case LEFT -> new Position(x - 1, y);
         };
+    }
+
+    @Override
+    public int compareTo(Position o) {
+        int compare = Integer.compare(this.y, o.y);
+        return compare == 0 ? Integer.compare(this.x, o.x) : compare;
     }
 }
