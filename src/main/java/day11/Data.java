@@ -1,6 +1,5 @@
 package day11;
 
-import utils.Move;
 import utils.Position;
 
 public class Data {
@@ -20,12 +19,12 @@ public class Data {
         this.value = value;
     }
 
-    public void moveDown() {
-        this.position = this.position.moveTo(Move.DOWN);
+    public void moveDown(int lineToExpand) {
+        this.position = new Position(this.position.x(), this.position.y() + lineToExpand);
     }
 
-    public void moveRight() {
-        this.position = this.position.moveTo(Move.RIGHT);
+    public void moveRight(int colToExpand) {
+        this.position = new Position(this.position.x() + colToExpand, this.position.y());
     }
 
     @Override

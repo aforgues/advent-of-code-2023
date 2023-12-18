@@ -43,7 +43,8 @@ public class GiantImage {
         for (int line = 0; line < this.totalLines; line++) {
             for (int column = 0; column < this.totalColumns; column++) {
                 Position pos = new Position(column, line);
-                sb.append(this.dataByPosition.get(pos).value());
+                Data data = this.dataByPosition.get(pos);
+                sb.append(data != null ? data.value() : EMPTY_SPACE);
             }
             sb.append("\n");
         }
@@ -51,8 +52,16 @@ public class GiantImage {
     }
 
     public long sumShortestPathBetweenGalaxies() {
+        return sumShortestPathBetweenGalaxies(2);
+    }
+
+    public long sumShortestPathBetweenMuchOlderGalaxies() {
+        return sumShortestPathBetweenGalaxies(1_000_000);
+    }
+
+    private long sumShortestPathBetweenGalaxies(int expansionScale) {
         // First expand universe : every row or column without column is doubled
-        expandUniverse(findLinesToExpand(), findColumnsToExpand());
+        expandUniverse(findLinesToExpand(), findColumnsToExpand(), expansionScale);
 
         // Identify all galaxies, then for every pair of galaxies, compute shortest path
         List<Data> galaxies = this.dataByPosition.values().stream()
@@ -65,6 +74,54 @@ public class GiantImage {
 
         // sum these shortest path length
         return sum;
+    }
+
+    private void expandUniverse(List<Integer> linesToExpand, List<Integer> columnsToExpand, int expansionScale) {
+        int expansionSize = expansionScale - 1;
+
+        // Replace the full grid expansion by a simple Galaxies location update
+        for (int y = 0; y < linesToExpand.size(); y++) {
+            int lineToExpand = linesToExpand.get(y) + y * expansionSize;
+            //System.out.println("Expanding line #" + lineToExpand);
+
+            // find all galaxies under this line
+            List<Data> galaxiesToShiftDown = this.dataByPosition.values().stream()
+                    .filter(data -> data.value().equals(GALAXY) && data.position().y() > lineToExpand)
+                    .toList();
+            // Shift them down
+            galaxiesToShiftDown.forEach(data -> {
+                        this.dataByPosition.remove(data.position());
+                        data.moveDown(expansionSize);
+                        this.dataByPosition.put(data.position(), data);
+                    });
+
+            this.totalLines += expansionSize;
+            //this.displayInConsole();
+        }
+
+        //this.displayInConsole();
+
+        for (int x = 0; x < columnsToExpand.size(); x++) {
+            int columnToExpand = columnsToExpand.get(x) + x * expansionSize;
+            //System.out.println("Expanding column #"+ columnToExpand);
+
+            // find all galaxies above this column
+            List<Data> galaxiesToShiftRight = this.dataByPosition.values().stream()
+                    .filter(data -> data.value().equals(GALAXY) && data.position().x() > columnToExpand)
+                    .toList();
+            // Shift them right
+            galaxiesToShiftRight.forEach(data -> {
+                        this.dataByPosition.remove(data.position());
+                        data.moveRight(expansionSize);
+                        this.dataByPosition.put(data.position(), data);
+                    });
+
+            this.totalColumns += expansionSize;
+            //this.displayInConsole();
+        }
+
+        //System.out.println("Expanded universe :");
+        //this.displayInConsole();
     }
 
     private List<Integer> findColumnsToExpand() {
@@ -87,49 +144,6 @@ public class GiantImage {
             }
         }
         return linesToExpand;
-    }
-
-    private void expandUniverse(List<Integer> linesToExpand, List<Integer> columnsToExpand) {
-        for (int y = 0; y < linesToExpand.size(); y++) {
-            int lineToExpand = linesToExpand.get(y) + y;
-            for (int line = this.totalLines - 1; line > lineToExpand ; line--) {
-                List<Data> datas = this.getLineAt(line);
-                datas.forEach(data -> {
-                    this.dataByPosition.remove(data.position());
-                    data.moveDown();
-                    this.dataByPosition.put(data.position(), data);
-                });
-            }
-            // Add empty line
-            for (int col = 0; col < this.totalColumns; col++) {
-                Position pos = new Position(col, lineToExpand + 1);
-                this.dataByPosition.put(pos, new Data(pos, EMPTY_SPACE));
-            }
-            this.totalLines++;
-        }
-
-        //this.displayInConsole();
-
-        for (int x = 0; x < columnsToExpand.size(); x++) {
-            int columnToExpand = columnsToExpand.get(x) + x;
-            for (int col = this.totalColumns - 1; col > columnToExpand ; col--) {
-                List<Data> datas = this.getColumnAt(col);
-                datas.forEach(data -> {
-                    this.dataByPosition.remove(data.position());
-                    data.moveRight();
-                    this.dataByPosition.put(data.position(), data);
-                });
-            }
-            // Add empty column
-            for (int line = 0; line < this.totalLines; line++) {
-                Position pos = new Position(columnToExpand + 1, line);
-                this.dataByPosition.put(pos, new Data(pos, EMPTY_SPACE));
-            }
-            this.totalColumns++;
-        }
-
-        System.out.println("Expanded universe :");
-        this.displayInConsole();
     }
 
     private List<Tuple<Data, Data>> computeAllGalaxyPairs(List<Data> galaxies) {
