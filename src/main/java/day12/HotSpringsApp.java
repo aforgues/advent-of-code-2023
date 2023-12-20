@@ -17,6 +17,9 @@ public class HotSpringsApp {
 
         // First part
         app.computeScore();
+
+        // Second part
+        app.computeScoreV2();
     }
 
     private final String filePath;
@@ -50,5 +53,15 @@ public class HotSpringsApp {
         Instant end = Instant.now();
 
         System.out.println("Score : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
+    }
+
+    private void computeScoreV2() {
+        Instant start = Instant.now();
+
+        long score = this.springConditionRecords.sumUnfoldedPossibleArrangementCounts();
+
+        Instant end = Instant.now();
+
+        System.out.println("Score Part 2 : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
     }
 }

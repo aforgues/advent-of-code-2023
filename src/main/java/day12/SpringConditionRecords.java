@@ -8,4 +8,10 @@ public record SpringConditionRecords(List<SpringConditionRow> springConditionRow
                 .map(SpringConditionRow::countPossibleArrangements)
                 .reduce(0L, Long::sum);
     }
+
+    public long sumUnfoldedPossibleArrangementCounts() {
+        return this.springConditionRowList.stream()
+                .map(SpringConditionRow::countUnfoldedPossibleArrangements)
+                .reduce(0L, Long::sum);
+    }
 }
