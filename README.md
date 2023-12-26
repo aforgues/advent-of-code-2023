@@ -16,4 +16,4 @@ Here are the puzzle pitches :
 - [Day 10 - Pipe Maze](./docs/day10.md) ⭐
 - [Day 11 - Cosmic Expansion](./docs/day11.md) ⭐⭐
 - [Day 12 - Hot Springs](./docs/day12.md) ⭐
-- [Day 13 - Point Of Incidence](./docs/day13.md) 
+- [Day 13 - Point Of Incidence](./docs/day13.md) ⭐ 

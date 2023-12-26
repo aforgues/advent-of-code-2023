@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class PointOfIncidenceApp {
 
-    private static final boolean TEST = true;
+    private static final boolean TEST = false;
     private static final String PUZZLE_INPUT_FILE_NAME = TEST ? "puzzle_input_test.txt" : "puzzle_input.txt";
 
     public static void main(String[] args) throws FileNotFoundException {
