@@ -3,10 +3,7 @@ package day13;
 import utils.Cell;
 import utils.Grid;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public record MirrorPatterns(List<Grid<String>> grids) {
     private static final boolean DEBUG = false;
@@ -32,11 +29,96 @@ public record MirrorPatterns(List<Grid<String>> grids) {
         grid.displayInConsole();
 
         long vscore = computeReflectionScore(grid, GridItemType.VERTICAL);
-        System.out.println("Vertical match score : " + vscore);
-
         long hscore = computeReflectionScore(grid, GridItemType.HORIZONTAL);
-        System.out.println("Horizontal match score : " + hscore);
+
         return vscore + hscore;
+    }
+
+    public long summarizeAfterFixingSmudges() {
+        return this.grids.stream()
+                .map(MirrorPatterns::fixSmudge)
+                .map(grid -> computeReflectionScore(grid, GridItemType.HORIZONTAL))
+                .reduce(0L, Long::sum);
+    }
+
+    private static Grid<String> fixSmudge(Grid<String> grid) {
+        // find smudge and fix it
+        Cell<String> smudge = findSmudgeInGrid(grid);
+
+        // return new grid after fixing smudge
+        return fixGridWith(grid, smudge);
+    }
+
+    private static Grid<String> fixGridWith(Grid<String> grid, Cell<String> cellToFix) {
+        if (cellToFix == null) {
+            System.out.println("No smudge found !! Returning original grid");
+            return grid;
+        }
+        Map<Integer, List<Cell<String>>> cellsByLine = new HashMap<>();
+        for (Integer line : grid.cellsByline().keySet()) {
+            List<Cell<String>> cells = new ArrayList<>(grid.cellsByline().get(line));
+            cellsByLine.put(line, cells);
+        }
+        List<Cell<String>> cells = cellsByLine.get(cellToFix.position().y());
+        cells.remove(cellToFix);
+        cells.add(cellToFix.position().x(), new Cell<>(cellToFix.data().equals("#") ? "." : "#", cellToFix.position()));
+        Grid<String> fixedGrid = new Grid<>(cellsByLine);
+        if (DEBUG) {
+            System.out.println("Fixed grid :");
+            fixedGrid.displayInConsole();
+        }
+        return fixedGrid;
+    }
+
+    private static Cell<String> findSmudgeInGrid(Grid<String> grid) {
+        Set<Cell<String>> smudgeCandidates = new HashSet<>();
+        for (int i = 0; i < grid.getLinesNumber(); i++) {
+            List<Cell<String>> itemCells = grid.getLine(i);
+            for (int j = 0; j < grid.getLinesNumber(); j++) {
+                if (i != j) {
+                    if (! grid.hasSameLineDataAt(j, itemCells)) {
+                        List<Cell<String>> otherItemCells = grid.getLine(j);
+                        int countNoMatch = 0;
+                        Cell<String> smudgeCandidate = null;
+                        for (int x = 0; x < grid.getColumnsNumber(); x++) {
+                            if (! itemCells.get(x).data().equals(otherItemCells.get(x).data())) {
+                                countNoMatch++;
+                                smudgeCandidate = itemCells.get(x);
+                            }
+                        }
+                        if (countNoMatch == 1) {
+                            if (DEBUG) {
+                                System.out.println("Found 2 lines not matching because of only one cell : " + i + " and " + j);
+                            }
+                            smudgeCandidates.add(smudgeCandidate);
+                        }
+                    }
+                }
+            }
+        }
+
+        System.out.println("Smudge candidates are : " + smudgeCandidates);
+
+        long previousReflectionScore = computeReflectionScore(grid, GridItemType.HORIZONTAL);
+
+        // check each smudge candidate to see if we got a new reflection line
+        for (Cell<String> smudgeCandidate : smudgeCandidates) {
+            if (DEBUG) {
+                System.out.println("Testing with smudge candidate " + smudgeCandidate);
+            }
+            Grid<String> fixedGrid = fixGridWith(grid, smudgeCandidate);
+            long newScore = computeReflectionScore(fixedGrid, GridItemType.HORIZONTAL);
+            if (DEBUG) {
+                System.out.println("New score for candidate " + smudgeCandidate + " => " + newScore);
+            }
+            if (newScore != 0 && newScore != previousReflectionScore) {
+                System.out.println("This candidate " + smudgeCandidate + " is the smudge");
+                // FIXME : should not find more than exactly one smudge ...
+                return smudgeCandidate;
+            }
+        }
+
+        return null/*smudgeCandidates.stream().findFirst().get()*/;
     }
 
     private enum GridItemType {
@@ -50,7 +132,7 @@ public record MirrorPatterns(List<Grid<String>> grids) {
     }
 
     private static long computeReflectionScore(Grid<String> grid, GridItemType gridItemType) {
-        // identify gap between matching items (lines or columns)
+        // identify matching items (lines or columns)
         Map<Integer, List<Integer>> matchingItemsByItemNumber = new HashMap<>();
 
         boolean isVerticalOrElseHorizontal = gridItemType == GridItemType.VERTICAL;
@@ -184,11 +266,15 @@ public record MirrorPatterns(List<Grid<String>> grids) {
                 }
 
                 if (prev < -1 || next >= itemNumber) {
-                    return (itemCandidate + 1) * (isVerticalOrElseHorizontal ? 1L : 100L);
+                    // FIXME : we could have multiple item candidate, here we only take the first working
+                    long score = (itemCandidate + 1) * (isVerticalOrElseHorizontal ? 1L : 100L);
+                    System.out.println(gridItemType.name() + " match score : " + score);
+                    return score;
                 }
             }
         }
 
+        System.out.println(gridItemType.name() + " match score : 0");
         return 0;
     }
 }

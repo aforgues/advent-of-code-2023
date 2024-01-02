@@ -14,14 +14,17 @@ import java.util.Scanner;
 
 public class PointOfIncidenceApp {
 
-    private static final boolean TEST = false;
+    private static final boolean TEST = true;
     private static final String PUZZLE_INPUT_FILE_NAME = TEST ? "puzzle_input_test.txt" : "puzzle_input.txt";
 
     public static void main(String[] args) throws FileNotFoundException {
         PointOfIncidenceApp app = new PointOfIncidenceApp();
 
         // First part
-        app.computeScore();
+        //app.computeScore();
+
+        // Second part
+        app.computeScoreV2();
     }
 
     private final String filePath;
@@ -71,5 +74,15 @@ public class PointOfIncidenceApp {
         Instant end = Instant.now();
 
         System.out.println("Score : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
+    }
+
+    private void computeScoreV2() {
+        Instant start = Instant.now();
+
+        long score = this.mirrorPatterns.summarizeAfterFixingSmudges();
+
+        Instant end = Instant.now();
+
+        System.out.println("Score Part 2 : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
     }
 }
