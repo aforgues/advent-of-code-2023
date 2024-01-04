@@ -1,9 +1,6 @@
 package utils;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public record Grid<T>(Map<Integer, List<Cell<T>>> cellsByline) {
 
@@ -16,7 +13,7 @@ public record Grid<T>(Map<Integer, List<Cell<T>>> cellsByline) {
     }
 
     public int getColumnsNumber() {
-        return this.cellsByline.getOrDefault(1, Collections.emptyList()).size();
+        return this.cellsByline.values().stream().flatMap(Collection::stream).map(Cell::position).map(Position::x).max(Integer::compare).orElse(-1) + 1;
     }
 
     public List<Cell<T>> getLine(int lineNumber) {
@@ -48,13 +45,29 @@ public record Grid<T>(Map<Integer, List<Cell<T>>> cellsByline) {
         return true;
     }
 
+    public boolean isInside(Position position) {
+        return position.x() >= 0 && position.x() < this.getColumnsNumber()
+                && position.y() >= 0 && position.y() < this.getLinesNumber();
+    }
+
     public void displayInConsole() {
         StringBuilder sb = new StringBuilder();
         int maxCol = this.getColumnsNumber();
         for (int line = 0; line < this.getLinesNumber(); line++) {
             for (int col = 0; col < maxCol; col++) {
                 Position pos = new Position(col, line);
-                sb.append(this.cellsByline.get(line).get(col).data());
+                List<Cell<T>> cellsInLine = this.cellsByline.get(line);
+                if (cellsInLine == null || cellsInLine.size() == 0) {
+                    sb.append(".");
+                    continue;
+                }
+                Optional<Cell<T>> cellToDisplay = cellsInLine.stream().filter(cell -> cell.position().equals(pos)).findFirst();
+                if (cellToDisplay.isPresent()) {
+                    sb.append(cellToDisplay.get().data());
+                }
+                else {
+                    sb.append(".");
+                }
             }
             sb.append("\n");
         }
