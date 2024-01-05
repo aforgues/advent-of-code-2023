@@ -18,3 +18,4 @@ Here are the puzzle pitches :
 - [Day 12 - Hot Springs](./docs/day12.md) ⭐
 - [Day 13 - Point Of Incidence](./docs/day13.md) ⭐
 - [Day 14 - Parabolic Reflector Dish](./docs/day14.md) ⭐⭐
+- [Day 15 - Lens Library](./docs/day15.md) ⭐
