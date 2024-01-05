@@ -15,6 +15,9 @@ public class LensLibraryApp {
 
         // First part
         app.computeScore();
+
+        // Second part
+        app.computeScoreV2();
     }
 
     private final String filePath;
@@ -47,5 +50,15 @@ public class LensLibraryApp {
         Instant end = Instant.now();
 
         System.out.println("Score : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
+    }
+
+    private void computeScoreV2() {
+        Instant start = Instant.now();
+
+        long score = new HolidayAsciiStringHelperManualArrangementProcedure(this.initializationSequence).totalFocusingPower();
+
+        Instant end = Instant.now();
+
+        System.out.println("Score Part 2 : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
     }
 }
