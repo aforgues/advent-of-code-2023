@@ -17,4 +17,4 @@ Here are the puzzle pitches :
 - [Day 11 - Cosmic Expansion](./docs/day11.md) ⭐⭐
 - [Day 12 - Hot Springs](./docs/day12.md) ⭐
 - [Day 13 - Point Of Incidence](./docs/day13.md) ⭐
-- [Day 14 - Parabolic Reflector Dish](./docs/day14.md) ⭐
+- [Day 14 - Parabolic Reflector Dish](./docs/day14.md) ⭐⭐
