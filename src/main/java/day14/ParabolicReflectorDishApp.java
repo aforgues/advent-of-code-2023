@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 public class ParabolicReflectorDishApp {
 
-    private static final boolean TEST = false;
+    private static final boolean TEST = true;
     private static final String PUZZLE_INPUT_FILE_NAME = TEST ? "puzzle_input_test.txt" : "puzzle_input.txt";
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -20,6 +20,9 @@ public class ParabolicReflectorDishApp {
 
         // First part
         app.computeScore();
+
+        // Second Part part
+        app.computeScoreV2();
     }
 
     private final String filePath;
@@ -55,10 +58,20 @@ public class ParabolicReflectorDishApp {
     private void computeScore() {
         Instant start = Instant.now();
 
-        long score = this.platorm.totalLoadOnSupportBeamToward(Move.UP);
+        long score = this.platorm.totalLoadOnSupportBeamToward();
 
         Instant end = Instant.now();
 
         System.out.println("Score : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
+    }
+
+    private void computeScoreV2() {
+        Instant start = Instant.now();
+
+        long score = this.platorm.totalLoadOnSupportBeamTowardAfterMultipleCycles(1_000_000_000);
+
+        Instant end = Instant.now();
+
+        System.out.println("Score Part 2 : " + score + " in " + (end.toEpochMilli() - start.toEpochMilli()) + "ms");
     }
 }
