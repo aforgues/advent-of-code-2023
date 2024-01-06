@@ -8,20 +8,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-// TODO : init with Map<Position, Cell<String> instead
-public record ContraptionLayout(List<Cell<String>> cells) {
+public record ContraptionLayout(Grid<String> grid) {
+    public static ContraptionLayout fromCells(List<Cell<String>> cells) {
+        Grid<String> grid = new Grid<>(cells.stream().collect(Collectors.groupingBy(cell -> cell.position().y())));
+        return new ContraptionLayout(grid);
+    }
+
     public Optional<Cell<String>> findCellAt(Position position) {
-        return this.cells.stream().filter(cell -> cell.position().equals(position)).findFirst();
+        List<Cell<String>> cellsByLine = this.grid.cellsByline().get(position.y());
+        return cellsByLine == null ? Optional.empty() : cellsByLine.stream().filter(cell -> cell.position().x() == position.x()).findFirst();
     }
 
     public boolean isPositionInsideGrid(Position position) {
-        // FIXME : build grid at init to avoid generating it each time
-        Grid<String> grid = new Grid<>(this.cells.stream().collect(Collectors.groupingBy(cell -> cell.position().y())));
-        return grid.isInside(position);
+        return this.grid.isInside(position);
     }
 
     public void displayAsGridInConsole() {
-        Grid<String> grid = new Grid<>(this.cells.stream().collect(Collectors.groupingBy(cell -> cell.position().y())));
-        grid.displayInConsole();
+        this.grid.displayInConsole();
     }
 }

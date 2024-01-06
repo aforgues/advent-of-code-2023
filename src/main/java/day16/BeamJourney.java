@@ -9,22 +9,20 @@ public class BeamJourney {
     private static final boolean DEBUG = false;
 
     private final ContraptionLayout contraptionLayout;
-    private final Set<Position> path;
 
     public BeamJourney(final ContraptionLayout contraptionLayout) {
         this.contraptionLayout = contraptionLayout;
-        this.path = new HashSet<>();
     }
 
     public long countEnergizedTiles() {
-        walkthrough();
-        displayEnergizedTilesInGrid();
-        return this.path.size();
+        Set<Position> path = walkthrough(new Position(0,0), Move.RIGHT);
+        displayEnergizedTilesInGrid(path);
+        return path.size();
     }
 
-    private void displayEnergizedTilesInGrid() {
+    private static void displayEnergizedTilesInGrid(Set<Position> path) {
         List<Cell<String>> cellsUpdated = new ArrayList<>();
-        for (Position position : this.path) {
+        for (Position position : path) {
             cellsUpdated.add(new Cell<>("#", position));
         }
 
@@ -32,9 +30,10 @@ public class BeamJourney {
         grid.displayInConsole();
     }
 
-    private void walkthrough() {
+    private Set<Position> walkthrough(Position initPosition, Move initMove) {
+        Set<Position> path = new HashSet<>();
         Queue<Tuple<Position, Move>> pathToExplore = new ArrayDeque<>();
-        pathToExplore.add(new Tuple<>(new Position(0,0), Move.RIGHT));
+        pathToExplore.add(new Tuple<>(initPosition, initMove));
 
         List<Tuple<Position, Move>> alreadyExplored = new ArrayList<>();
         while(! pathToExplore.isEmpty()) {
@@ -51,14 +50,14 @@ public class BeamJourney {
                 continue;
             }
 
-            this.path.add(currentPosition);
+            path.add(currentPosition);
 
             Position nextPosition = currentPosition.moveTo(currentMove);
             if (DEBUG)
                 System.out.println("    Next position : " + nextPosition);
 
             if (this.contraptionLayout.isPositionInsideGrid(nextPosition)) {
-                this.path.add(nextPosition);
+                path.add(nextPosition);
 
                 Optional<Cell<String>> nextCell = this.contraptionLayout.findCellAt(nextPosition);
 
@@ -132,5 +131,48 @@ public class BeamJourney {
                     System.out.println("    Out of grid => ignoring !");
             }
         }
+        return path;
+    }
+
+    public long countLargestEnergizedTiles() {
+        long largestPathSize = 0;
+
+        // Check every possible option
+        // - First Line to DOWN
+        for (int column = 0; column < this.contraptionLayout.grid().getColumnsNumber(); column++) {
+            System.out.println("First line DOWN " + column);
+            Set<Position> path = walkthrough(new Position(column,0), Move.DOWN);
+            if (DEBUG)
+                displayEnergizedTilesInGrid(path);
+            largestPathSize = Math.max(largestPathSize, path.size());
+        }
+
+        // - Last Line to UP
+        for (int column = 0; column < this.contraptionLayout.grid().getColumnsNumber(); column++) {
+            System.out.println("Last line UP " + column);
+            Set<Position> path = walkthrough(new Position(column,this.contraptionLayout.grid().getLinesNumber() - 1), Move.UP);
+            if (DEBUG)
+                displayEnergizedTilesInGrid(path);
+            largestPathSize = Math.max(largestPathSize, path.size());
+        }
+
+        // - First Column to RIGHT
+        for (int line = 0; line < this.contraptionLayout.grid().getLinesNumber(); line++) {
+            System.out.println("First column RIGHT " + line);
+            Set<Position> path = walkthrough(new Position(0,line), Move.RIGHT);
+            if (DEBUG)
+                displayEnergizedTilesInGrid(path);
+            largestPathSize = Math.max(largestPathSize, path.size());
+        }
+
+        // - Last Column to LEFT
+        for (int line = 0; line < this.contraptionLayout.grid().getLinesNumber(); line++) {
+            System.out.println("Last column LEFT " + line);
+            Set<Position> path = walkthrough(new Position(this.contraptionLayout.grid().getColumnsNumber() - 1, line), Move.LEFT);
+            if (DEBUG)
+                displayEnergizedTilesInGrid(path);
+            largestPathSize = Math.max(largestPathSize, path.size());
+        }
+        return largestPathSize;
     }
 }
