@@ -9,7 +9,7 @@ public record Grid<T>(Map<Integer, List<Cell<T>>> cellsByline) {
     }
 
     public int getLinesNumber() {
-        return this.cellsByline.size();
+        return this.cellsByline.values().stream().flatMap(Collection::stream).map(Cell::position).map(Position::y).max(Integer::compare).orElse(-1) + 1;
     }
 
     public int getColumnsNumber() {
